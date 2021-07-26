@@ -48,7 +48,14 @@
     // message -> server(log)
     throw new Error(message);
     while (true) {
-      
     }
   }
+  let neverEnding: never; //💩
+
+  // object
+  let obj: object; //💩
+  function acceptSomeObject(obj: object) {
+    acceptSomeObject({name: "kim"});
+  }
+
 }
