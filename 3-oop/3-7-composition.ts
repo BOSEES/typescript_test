@@ -59,41 +59,58 @@
       return this.extract(shots);
     }
   }
-  class CafeLatteMachine extends CoffeeMachine {
-    constructor(beans: number, public readonly serialNumber: string) {
-      super(beans);
-    }
+  class CheapMilkSteamer {
     private steamMilk(): void {
       console.log("우유 끓이는중");
+    }
+    makeMilk(cup: CoffeeCup): CoffeeCup {
+      this.steamMilk();
+      return {
+        ...cup,
+        hasMilk: true,
+      };
+    }
+  }
+  class AutomaticSugerMixer {
+    private getSuger(){
+      console.log("설탕 만드는중");
+      return true;
+    }
+    addSuger(cup:CoffeeCup): CoffeeCup {
+      const suger = this.getSuger();
+      return {
+        ...cup,
+        hasSuger: suger,
+      }
+    }
+  }
+  class CafeLatteMachine extends CoffeeMachine {
+    constructor(beans: number, public readonly serialNumber: string,private milkForther: CheapMilkSteamer) {
+      super(beans);
     }
 
     makeCoffee(shots: number): CoffeeCup {
       const coffee = super.makeCoffee(shots);
-      this.steamMilk()
-      return {
-        ...coffee,
-        hasMilk: true
-      }
+      return this.milkForther.makeMilk(coffee);
     }
   }
   class SweetCoffeeMaker extends CoffeeMachine {
+    constructor(beans: number, private suger: AutomaticSugerMixer){
+      super(beans);
+    }
     makeCoffee(shots: number) : CoffeeCup {
       const coffee = super.makeCoffee(shots);
-      return {
-        ...coffee,
-        hasSuger: true,
-      }
+      return this.suger.addSuger(coffee);
     }
   }
-
-  const machines = [
-    new CoffeeMachine(16),
-    new CafeLatteMachine(16,"asd"),
-    new SweetCoffeeMaker(16),
-  ];
-
-  machines.forEach((machine) => {
-    console.log("---------------------------");
-    machine.makeCoffee(1);
-  })
+  class SweetCafeLatteMachine extends CoffeeMachine {
+    constructor(private beans: number,private milk: CheapMilkSteamer,private suger: AutomaticSugerMixer) {
+      super(beans);
+    }
+    makeCoffee(shots: number): CoffeeCup {
+      const coffee = super.makeCoffee(shots);
+      const sugerAdded = this.suger.addSuger(coffee);
+      return this.milk.makeMilk(sugerAdded);
+    }
+  }
 }
