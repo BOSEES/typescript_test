@@ -49,12 +49,6 @@
   stack.push("duddlf3");
   stack.push("duddlf1")
   stack.push("duddlf2")
-  stack.push("duddlf3");
-  stack.push("duddlf1")
-  stack.push("duddlf2")
-  stack.push("duddlf3");
 
-  while(stack.size !== 0) {
-    console.log(stack.pop());
-  }
+  console.log(stack.size);
 }
