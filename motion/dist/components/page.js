@@ -1,0 +1,10 @@
+export class PageComponents {
+    constructor() {
+        this.element = document.createElement("ul");
+        this.element.setAttribute("class", "page");
+        this.element.textContent = "This is PageComponents";
+    }
+    attachTo(parent, position = "afterbegin") {
+        parent.insertAdjacentElement(position, this.element);
+    }
+}
