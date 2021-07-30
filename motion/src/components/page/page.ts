@@ -1,12 +1,47 @@
-export class PageComponents {
-  private element: HTMLUListElement;
+import { BaseComponent, Component } from "../component.js";
+
+export interface Composable {
+  addChild(child: Component) : void;
+}
+
+type OnCloseListener = () => void;
+class PageItemComponent extends BaseComponent<HTMLElement> implements Component{
+  private closeListener?: OnCloseListener;
+
   constructor() {
-    this.element = document.createElement("ul");
-    this.element.setAttribute("class","page");
-    this.element.textContent = "This is PageComponents";
+    super(`<li class="page-item">
+            <section class="page-item__body"></section>
+            <div class="page-item__controls">
+              <button class="close">&times;</button>
+            </div>
+          </li>`);
+
+    const closeBtn = this.element.querySelector(".close")! as HTMLButtonElement;
+    closeBtn.onclick = () => {
+      this.closeListener && this.closeListener();
+    }
+  }
+  
+  addChild(child: Component) {
+    const container = this.element.querySelector(".page-item__body")! as HTMLElement;
+    child.attachTo(container);
+  }
+  setOnCloseListner(listener: OnCloseListener) {
+    this.closeListener = listener;
+  }
+}
+
+export class PageComponents extends BaseComponent<HTMLUListElement> implements Component{
+  constructor() {
+    super("<ul class='page'></ul>");
   }
 
-  attachTo(parent: HTMLElement, position: InsertPosition = "afterbegin" ) {
-    parent.insertAdjacentElement(position, this.element);
+  addChild(section: Component) {
+    const item = new PageItemComponent();
+    item.addChild(section);
+    item.attachTo(this.element, "beforeend");
+    item.setOnCloseListner(() => {
+      item.removeFrom(this.element);
+    })
   }
 }
